@@ -1,0 +1,24 @@
+{% load static %}
+
+<!DOCTYPE html>
+<!--[if IE 9]>         <html class="no-js lt-ie10" lang="en"> <![endif]-->
+<!--[if gt IE 9]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+
+<head>
+    <meta charset="utf-8">
+
+    <title>CodeasyB - Panel</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0">
+    {% include "back/master/css.html" %}
+    {% block headblock %} {% endblock %}
+</head>
+
+<body class="animsition">
+
+    {% block backendblock %} {% endblock %}
+
+    {% include "back/master/settings.html" %}
+    {% include "back/master/js.html" %}
+    {% block footerjsblock %} {% endblock %}
+</body>
+</html>
