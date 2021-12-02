@@ -10,6 +10,7 @@ urlpatterns = [
     path('news/', include('news.urls')),
     path('panel/', include('panel.urls')),
     path('', include('category.urls')),
+    path('', include('subcategory.urls')),
     
 ]
 
