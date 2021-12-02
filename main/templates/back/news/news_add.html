@@ -42,8 +42,9 @@
                             <div class="col-md-6">
                                 <select id="newscategory" name="newscategory" class="select-chosen" data-placeholder="Choose a Catergory" style="width: 250px;">
                                     <option></option>
-                                    <option>Catergory 1</option>
-                                    <option>Catergory 1</option>
+                                    {% for i in categories %}
+                                    <option value="{{ i.pk }}">{{ i.category_name }} | {{ i.name }}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                         </div>

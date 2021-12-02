@@ -38,14 +38,14 @@
                             <th class="text-center">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="text-center">
                         {% for art in articles %}
                         <tr>
                             <td class="text-center">{{ art.pk }}</td>
                             <td>{{ art.title }}</td>
                             <td><img style="display: inline-block;" src="{{ art.image_url }}" width="80" height="50"></td>
                             <td>{{ art.time_stamp | date:"F d Y" }}</td>
-                            <td>{{ art.category }}</td>
+                            <td>{{ art.category_name }}</td>
                             <td>{{ art.authur }}</td>
                             <td>{{ art.views }}</td>
                             <td class="text-center">

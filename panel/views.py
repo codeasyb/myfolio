@@ -5,6 +5,7 @@ from news.models import Article
 
 from ipware import get_client_ip
 # import datetime
+from subcategory.models import Sub_Category
 
 def panel(request):
     
@@ -45,13 +46,17 @@ def news_add(request):
         
     # print(str(year) + "/" + str(month) + "/" + str(day))
     
+    categories = Sub_Category.objects.all()
+    
     if request.method == "POST":
         newsarticlename = request.POST.get('newsarticlename')
         newsauthor = request.POST.get('newsauthor')
         newscategory = request.POST.get('newscategory')
         newsshorttitle = request.POST.get('newsshorttitle')
         newsbody = request.POST.get('newsbody')
+        newsid = request.POST.get('newscategory')
         
+        print(str(newscategory))
         # User requirements for creating and article
         if newsauthor == "" or newsshorttitle == "" or newsbody == "" or newscategory == "":
             errors = {
@@ -73,9 +78,11 @@ def news_add(request):
                 
                 # we can only accept imagers less than 5MB
                 if myfile.size < 5000000:
+                    
+                    article_name = Sub_Category.objects.get(pk=newsid).name
                     data = Article(article=newsarticlename, authur=newsauthor, title=newsshorttitle,
-                                body=newsbody, category_name=newscategory, image=filename, image_url=url, 
-                                category_id=0, views=0)
+                                body=newsbody, category_name=article_name, image=filename, image_url=url, 
+                                category_id=newsid, views=0)
                     data.save()
                     return redirect('article_lists') # you can redirect to this page if preferred 
                 else:
@@ -99,7 +106,7 @@ def news_add(request):
         except:
             errors = { "error": "Please Input Your Image!" }
             return render(request, 'back/news/errors/add_error.html', errors)
-    return render(request, "back/news/news_add.html")
+    return render(request, "back/news/news_add.html", {'categories':categories})
 
 def news_delete(request, pk):
     
