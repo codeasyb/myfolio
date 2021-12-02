@@ -56,8 +56,6 @@ def news_add(request):
         newsbody = request.POST.get('newsbody')
         newsid = request.POST.get('newscategory')
         
-        print(str(newscategory))
-        # User requirements for creating and article
         if newsauthor == "" or newsshorttitle == "" or newsbody == "" or newscategory == "":
             errors = {
                 "error": "All Fields Required!",
@@ -70,8 +68,6 @@ def news_add(request):
             myfile = request.FILES['myfile']
             fs = FileSystemStorage()
             filename = fs.save(myfile.name, myfile)
-            # full_path = "media/" + filename
-            # complete_path = os.path.abspath(full_path)
             url = fs.url(filename)
                 
             if str(myfile.content_type).startswith("image"):
@@ -127,3 +123,86 @@ def news_delete(request, pk):
                 raise
     b.delete()
     return redirect('article_lists') 
+
+def news_edit(request, pk):
+    
+    if len(Article.objects.filter(pk=pk)) == 0:
+        error = "Article not Found!"
+        return render(request, 'back/news/errors/add_error.html', {'error':error})
+    
+    news = Article.objects.get(pk=pk)
+    categories = Sub_Category.objects.all()
+    
+    if request.method == "POST":
+        newsarticlename = request.POST.get('newsarticlename')
+        newsauthor = request.POST.get('newsauthor')
+        newscategory = request.POST.get('newscategory')
+        newsshorttitle = request.POST.get('newsshorttitle')
+        newsbody = request.POST.get('newsbody')
+        newsid = request.POST.get('newscategory')
+        
+        if newsauthor == "" or newsshorttitle == "" or newsbody == "" or newscategory == "":
+            errors = {
+                "error": "All Fields Required!",
+            }
+            return render(request, 'back/news/errors/add_error.html', errors)
+        
+        # Adding a check for if the file is an image or a non image file 
+        # File requirements
+        try: 
+            myfile = request.FILES['myfile']
+            fs = FileSystemStorage()
+            filename = fs.save(myfile.name, myfile)
+            url = fs.url(filename)
+                
+            if str(myfile.content_type).startswith("image"):
+                
+                # we can only accept imagers less than 5MB
+                if myfile.size < 5000000:                    
+                    category_name = Sub_Category.objects.get(pk=newsid).name
+                    # try:
+                    #     fs = FileSystemStorage()
+                    #     fs.delete(filename)
+                    # except OSError as e:
+                    #     if e.errno != errno.ENOENT:
+                    #         raise
+                    b = Article.objects.get(pk=pk)
+                    b.article = newsarticlename
+                    b.title = newsshorttitle
+                    b.body = newsbody
+                    b.image = filename
+                    b.image_url = url
+                    b.category_name = category_name
+                    b.category_id = newsid
+                    b.save()
+                    return redirect('article_lists') 
+                else:
+                    try:
+                        fs = FileSystemStorage()
+                        fs.delete(filename)
+                    except OSError as e:
+                        if e.errno != errno.ENOENT:
+                            raise
+                    errors = { "error": "Your File Exceeds 5MB limit!" }
+                    return render(request, 'back/news/errors/add_error.html', errors)
+            else:
+                try:
+                    fs = FileSystemStorage()
+                    fs.delete(filename)
+                except OSError as e:
+                    if e.errno != errno.ENOENT:
+                        raise
+                errors = { "error": "Your File Not Supported!" }
+                return render(request, 'back/news/errors/add_error.html', errors)
+        except:
+            category_name = Sub_Category.objects.get(pk=newsid).name
+        
+            b = Article.objects.get(pk=pk)
+            b.article = newsarticlename
+            b.title = newsshorttitle
+            b.body = newsbody
+            b.category_name = category_name
+            b.category_id = newsid
+            b.save()
+            return redirect('article_lists') 
+    return render(request, 'back/news/news_edit.html', {'pk':pk, 'categories':categories, 'news': news})

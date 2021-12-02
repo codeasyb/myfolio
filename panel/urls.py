@@ -12,6 +12,7 @@ urlpatterns = [
     path('news/add/', views.news_add, name="article_add"),
     # path('news/del/(?P<pk>\d+)', views.news_delete, name="article_delete"),
     path('news/del/<int:pk>', views.news_delete, name="article_delete"),
+    path('news/edit/<int:pk>', views.news_edit, name="article_edit"),
     path("category/list/", category_list, name="category_list"),
     path("category/add/", category_add, name="category_add"),
     path("subcategory/list/", subcategory_list, name="subcategory_list"),
