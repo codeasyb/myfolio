@@ -4,8 +4,7 @@ from django.core.files.storage import FileSystemStorage
 from news.models import Article
 
 from ipware import get_client_ip
-import datetime
-
+# import datetime
 
 def panel(request):
     
@@ -80,9 +79,21 @@ def news_add(request):
                     data.save()
                     return redirect('article_lists') # you can redirect to this page if preferred 
                 else:
+                    try:
+                        fs = FileSystemStorage()
+                        fs.delete(filename)
+                    except OSError as e:
+                        if e.errno != errno.ENOENT:
+                            raise
                     errors = { "error": "Your File Exceeds 5MB limit!" }
                     return render(request, 'back/news/errors/add_error.html', errors)
             else:
+                try:
+                    fs = FileSystemStorage()
+                    fs.delete(filename)
+                except OSError as e:
+                    if e.errno != errno.ENOENT:
+                        raise
                 errors = { "error": "Your File Not Supported!" }
                 return render(request, 'back/news/errors/add_error.html', errors)
         except:
@@ -102,9 +113,8 @@ def news_delete(request, pk):
         file_for_deletion = str(get_base) + str(b.image_url)
         
         try:
-            # fs.delete(b.image_url) # this is not working, check later
+            # fs.delete(b.image_url) # this is not working here, check later
             os.remove(file_for_deletion)
-            print("Done.")
         except OSError as e:
             if e.errno != errno.ENOENT:
                 raise
